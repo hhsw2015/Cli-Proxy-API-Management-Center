@@ -10,6 +10,8 @@ interface ModelInputListProps {
   disabled?: boolean;
   namePlaceholder?: string;
   aliasPlaceholder?: string;
+  modelIdPlaceholder?: string;
+  showModelId?: boolean;
   hideAddButton?: boolean;
   onAdd?: () => void;
   className?: string;
@@ -27,6 +29,8 @@ export function ModelInputList({
   disabled = false,
   namePlaceholder = 'model-name',
   aliasPlaceholder = 'alias (optional)',
+  modelIdPlaceholder = 'model-id (Bedrock ARN)',
+  showModelId = false,
   hideAddButton = false,
   onAdd,
   className = '',
@@ -36,12 +40,12 @@ export function ModelInputList({
   removeButtonTitle = 'Remove',
   removeButtonAriaLabel = 'Remove',
 }: ModelInputListProps) {
-  const currentEntries = entries.length ? entries : [{ name: '', alias: '' }];
+  const currentEntries = entries.length ? entries : [{ name: '', alias: '', modelId: '' }];
   const containerClassName = ['header-input-list', className].filter(Boolean).join(' ');
   const inputClassNames = ['input', inputClassName].filter(Boolean).join(' ');
   const rowClassNames = ['header-input-row', rowClassName].filter(Boolean).join(' ');
 
-  const updateEntry = (index: number, field: 'name' | 'alias', value: string) => {
+  const updateEntry = (index: number, field: 'name' | 'alias' | 'modelId', value: string) => {
     const next = currentEntries.map((entry, idx) => (idx === index ? { ...entry, [field]: value } : entry));
     onChange(next);
   };
@@ -50,13 +54,13 @@ export function ModelInputList({
     if (onAdd) {
       onAdd();
     } else {
-      onChange([...currentEntries, { name: '', alias: '' }]);
+      onChange([...currentEntries, { name: '', alias: '', modelId: '' }]);
     }
   };
 
   const removeEntry = (index: number) => {
     const next = currentEntries.filter((_, idx) => idx !== index);
-    onChange(next.length ? next : [{ name: '', alias: '' }]);
+    onChange(next.length ? next : [{ name: '', alias: '', modelId: '' }]);
   };
 
   return (
@@ -79,6 +83,18 @@ export function ModelInputList({
               onChange={(e) => updateEntry(index, 'alias', e.target.value)}
               disabled={disabled}
             />
+            {showModelId && (
+              <>
+                <span className="header-separator">:</span>
+                <input
+                  className={inputClassNames}
+                  placeholder={modelIdPlaceholder}
+                  value={entry.modelId}
+                  onChange={(e) => updateEntry(index, 'modelId', e.target.value)}
+                  disabled={disabled}
+                />
+              </>
+            )}
             <Button
               variant="ghost"
               size="sm"

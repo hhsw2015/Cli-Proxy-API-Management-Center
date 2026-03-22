@@ -345,6 +345,36 @@ export function AiProvidersClaudeEditPage() {
               onChange={(e) => setForm((prev) => ({ ...prev, proxyUrl: e.target.value }))}
               disabled={saving || disableControls || isTesting}
             />
+
+            {/* AWS Bedrock Fields */}
+            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', marginTop: '8px' }}>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                AWS Bedrock (optional — leave empty for Anthropic API)
+              </div>
+              <Input
+                label="AWS Access Key ID"
+                value={form.awsAccessKeyId ?? ''}
+                onChange={(e) => setForm((prev) => ({ ...prev, awsAccessKeyId: e.target.value }))}
+                disabled={saving || disableControls || isTesting}
+                placeholder="AKIA..."
+              />
+              <Input
+                label="AWS Secret Access Key"
+                type="password"
+                value={form.awsSecretAccessKey ?? ''}
+                onChange={(e) => setForm((prev) => ({ ...prev, awsSecretAccessKey: e.target.value }))}
+                disabled={saving || disableControls || isTesting}
+                placeholder="..."
+              />
+              <Input
+                label="AWS Region"
+                value={form.awsRegion ?? ''}
+                onChange={(e) => setForm((prev) => ({ ...prev, awsRegion: e.target.value }))}
+                disabled={saving || disableControls || isTesting}
+                placeholder="us-east-1"
+              />
+            </div>
+
             <HeaderInputList
               entries={form.headers}
               onChange={(entries) => setForm((prev) => ({ ...prev, headers: entries }))}
@@ -391,6 +421,8 @@ export function AiProvidersClaudeEditPage() {
                 onChange={(entries) => setForm((prev) => ({ ...prev, modelEntries: entries }))}
                 namePlaceholder={t('common.model_name_placeholder')}
                 aliasPlaceholder={t('common.model_alias_placeholder')}
+                modelIdPlaceholder="model-id (Bedrock ARN)"
+                showModelId={!!form.awsAccessKeyId}
                 disabled={saving || disableControls || isTesting}
                 hideAddButton
                 className={styles.modelInputList}

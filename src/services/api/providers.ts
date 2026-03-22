@@ -43,6 +43,9 @@ const serializeModelAliases = (models?: ModelAlias[]) =>
           if (model.testModel) {
             payload['test-model'] = model.testModel;
           }
+          if (model.modelId) {
+            payload['model-id'] = model.modelId;
+          }
           return payload;
         })
         .filter(Boolean)
@@ -61,6 +64,9 @@ const serializeProviderKey = (config: ProviderKeyConfig) => {
   if (config.priority !== undefined) payload.priority = config.priority;
   if (config.prefix?.trim()) payload.prefix = config.prefix.trim();
   if (config.baseUrl) payload['base-url'] = config.baseUrl;
+  if (config.awsAccessKeyId) payload['aws-access-key-id'] = config.awsAccessKeyId;
+  if (config.awsSecretAccessKey) payload['aws-secret-access-key'] = config.awsSecretAccessKey;
+  if (config.awsRegion) payload['aws-region'] = config.awsRegion;
   if (config.websockets !== undefined) payload.websockets = config.websockets;
   if (config.proxyUrl) payload['proxy-url'] = config.proxyUrl;
   const headers = serializeHeaders(config.headers);

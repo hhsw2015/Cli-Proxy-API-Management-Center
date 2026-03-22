@@ -58,8 +58,11 @@ const buildEmptyForm = (): ProviderFormState => ({
   headers: [],
   models: [],
   excludedModels: [],
-  modelEntries: [{ name: '', alias: '' }],
+  modelEntries: [{ name: '', alias: '', modelId: '' }],
   excludedText: '',
+  awsAccessKeyId: '',
+  awsSecretAccessKey: '',
+  awsRegion: '',
 });
 
 const buildEmptyDraft = (): ClaudeEditDraft => ({

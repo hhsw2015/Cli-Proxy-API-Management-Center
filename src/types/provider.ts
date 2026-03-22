@@ -8,6 +8,7 @@ export interface ModelAlias {
   alias?: string;
   priority?: number;
   testModel?: string;
+  modelId?: string;
 }
 
 export interface ApiKeyEntry {
@@ -44,6 +45,9 @@ export interface ProviderKeyConfig {
   models?: ModelAlias[];
   excludedModels?: string[];
   cloak?: CloakConfig;
+  awsAccessKeyId?: string;
+  awsSecretAccessKey?: string;
+  awsRegion?: string;
 }
 
 export interface OpenAIProviderConfig {

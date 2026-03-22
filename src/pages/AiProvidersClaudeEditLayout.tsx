@@ -47,8 +47,11 @@ const buildEmptyForm = (): ProviderFormState => ({
   headers: [],
   models: [],
   excludedModels: [],
-  modelEntries: [{ name: '', alias: '' }],
+  modelEntries: [{ name: '', alias: '', modelId: '' }],
   excludedText: '',
+  awsAccessKeyId: '',
+  awsSecretAccessKey: '',
+  awsRegion: '',
 });
 
 const parseIndexParam = (value: string | undefined) => {
@@ -101,6 +104,9 @@ const buildClaudeSignature = (form: ProviderFormState) =>
     models: normalizeClaudeModelEntries(form.modelEntries),
     excludedModels: parseExcludedModels(form.excludedText ?? ''),
     cloak: normalizeCloakConfig(form.cloak),
+    awsAccessKeyId: String(form.awsAccessKeyId ?? '').trim(),
+    awsSecretAccessKey: String(form.awsSecretAccessKey ?? '').trim(),
+    awsRegion: String(form.awsRegion ?? '').trim(),
   });
 
 export function AiProvidersClaudeEditLayout() {
@@ -363,11 +369,15 @@ export function AiProvidersClaudeEditLayout() {
             const name = entry.name.trim();
             if (!name) return null;
             const alias = entry.alias.trim();
-            return { name, alias: alias || name };
+            const modelId = entry.modelId?.trim() || undefined;
+            return { name, alias: alias || name, modelId };
           })
           .filter(Boolean) as ProviderKeyConfig['models'],
         excludedModels: parseExcludedModels(form.excludedText),
         cloak: form.cloak,
+        awsAccessKeyId: form.awsAccessKeyId?.trim() || undefined,
+        awsSecretAccessKey: form.awsSecretAccessKey?.trim() || undefined,
+        awsRegion: form.awsRegion?.trim() || undefined,
       };
 
       const nextList =

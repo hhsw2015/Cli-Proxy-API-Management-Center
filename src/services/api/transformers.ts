@@ -56,6 +56,10 @@ const normalizeModelAliases = (models: unknown): ModelAlias[] => {
       if (testModel) {
         entry.testModel = String(testModel);
       }
+      const modelId = item['model-id'] ?? item.modelId;
+      if (modelId) {
+        entry.modelId = String(modelId);
+      }
       return entry;
     })
     .filter(Boolean) as ModelAlias[];
@@ -116,10 +120,17 @@ const normalizeProviderKeyConfig = (item: unknown): ProviderKeyConfig | null => 
   if (item === undefined || item === null) return null;
   const record = isRecord(item) ? item : null;
   const apiKey = record?.['api-key'] ?? record?.apiKey ?? (typeof item === 'string' ? item : '');
+  const awsAk = record?.['aws-access-key-id'] ?? record?.awsAccessKeyId;
   const trimmed = String(apiKey || '').trim();
-  if (!trimmed) return null;
+  // Allow entries with AWS credentials even if api-key is empty.
+  if (!trimmed && !awsAk) return null;
 
   const config: ProviderKeyConfig = { apiKey: trimmed };
+  if (awsAk) config.awsAccessKeyId = String(awsAk).trim();
+  const awsSk = record?.['aws-secret-access-key'] ?? record?.awsSecretAccessKey;
+  if (awsSk) config.awsSecretAccessKey = String(awsSk).trim();
+  const awsRegion = record?.['aws-region'] ?? record?.awsRegion;
+  if (awsRegion) config.awsRegion = String(awsRegion).trim();
   const priority = record?.priority ?? record?.['priority'];
   if (priority !== undefined && priority !== null && String(priority).trim() !== '') {
     const parsed = Number(priority);

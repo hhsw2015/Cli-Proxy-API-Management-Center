@@ -5,6 +5,7 @@ import type { KeyStats, UsageDetail } from '@/utils/usage';
 export interface ModelEntry {
   name: string;
   alias: string;
+  modelId?: string;
 }
 
 export interface OpenAIFormState {
