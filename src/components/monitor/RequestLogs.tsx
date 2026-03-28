@@ -261,7 +261,7 @@ export function RequestLogs({ data, loading: parentLoading, providerMap, provide
             normalizeCache.set(source, normalizedSource);
           }
           const sourceInfo = resolveSourceDisplay(normalizedSource, detail.auth_index, sourceInfoMap, authFileMap);
-          const providerType = sourceInfo.type || providerTypeMap[source] || '--';
+          const providerType = (detail as { provider?: string }).provider || sourceInfo.type || providerTypeMap[source] || '--';
           const resolvedName = sourceInfo.displayName && sourceInfo.displayName !== normalizedSource
             ? sourceInfo.displayName
             : null;
