@@ -587,6 +587,13 @@
   border-color: rgba($primary-color, 0.22);
 }
 
+.providerBadge {
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.08);
+  border-color: rgba(124, 58, 237, 0.22);
+  font-weight: 600;
+}
+
 .path {
   color: var(--text-primary);
   font-weight: 700;

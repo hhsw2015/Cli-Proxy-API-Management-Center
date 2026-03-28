@@ -98,6 +98,20 @@ const extractHttpMethodAndPath = (text: string): { method?: HttpMethod; path?: s
   return { method, path };
 };
 
+// Known provider names emitted by CPA executors (used to identify provider segments in log lines).
+const KNOWN_PROVIDERS = new Set([
+  'bedrock', 'azure', 'openai', 'gemini', 'vertex', 'claude', 'groq', 'deepseek',
+  'codex', 'kiro', 'kilo', 'iflow', 'antigravity', 'qwen', 'kimi', 'aistudio',
+  'gemini-cli', 'gitlab', 'openai-compat', 'github-copilot',
+]);
+
+const looksLikeProvider = (s: string): boolean => {
+  const lower = s.toLowerCase();
+  if (KNOWN_PROVIDERS.has(lower)) return true;
+  // Also match patterns like "openai-compat", "groq-01" etc.
+  return /^[a-z][a-z0-9-]{1,24}$/.test(lower) && !LOG_LATENCY_REGEX.test(s) && !/^\d/.test(s);
+};
+
 export const parseLogLine = (raw: string): ParsedLogLine => {
   let remaining = raw.trim();
 
@@ -137,6 +151,7 @@ export const parseLogLine = (raw: string): ParsedLogLine => {
   let ip: string | undefined;
   let method: HttpMethod | undefined;
   let path: string | undefined;
+  let provider: string | undefined;
   let message = remaining;
 
   if (remaining.includes('|')) {
@@ -231,6 +246,18 @@ export const parseLogLine = (raw: string): ParsedLogLine => {
       }
     }
 
+    // provider: segment right after statusCode segment that looks like a provider name
+    if (statusIndex >= 0) {
+      const candidateIndex = statusIndex + 1;
+      if (candidateIndex < segments.length && !consumed.has(candidateIndex)) {
+        const candidate = segments[candidateIndex].trim();
+        if (looksLikeProvider(candidate)) {
+          provider = candidate.toLowerCase();
+          consumed.add(candidateIndex);
+        }
+      }
+    }
+
     message = segments.filter((_, index) => !consumed.has(index)).join(' | ');
   } else {
     statusCode = detectHttpStatusCode(remaining);
@@ -269,6 +296,7 @@ export const parseLogLine = (raw: string): ParsedLogLine => {
     ip,
     method,
     path,
+    provider,
     message,
   };
 };

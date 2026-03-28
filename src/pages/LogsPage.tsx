@@ -809,6 +809,12 @@ export function LogsPage() {
                               </span>
                             )}
 
+                            {line.provider && (
+                              <span className={[styles.badge, styles.providerBadge].join(' ')}>
+                                {line.provider}
+                              </span>
+                            )}
+
                             {line.latency && <span className={styles.pill}>{line.latency}</span>}
                             {line.ip && <span className={styles.pill}>{line.ip}</span>}
 
