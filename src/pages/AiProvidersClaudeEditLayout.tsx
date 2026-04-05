@@ -105,9 +105,9 @@ const buildClaudeBaseline = (form: ProviderFormState): ClaudeEditBaseline => ({
   models: normalizeClaudeModelEntries(form.modelEntries),
   excludedModels: parseExcludedModels(form.excludedText ?? ''),
   cloak: normalizeCloakConfig(form.cloak),
-  awsAccessKeyId: String((form as Record<string, unknown>).awsAccessKeyId ?? '').trim(),
-  awsSecretAccessKey: String((form as Record<string, unknown>).awsSecretAccessKey ?? '').trim(),
-  awsRegion: String((form as Record<string, unknown>).awsRegion ?? '').trim(),
+  awsAccessKeyId: String(form.awsAccessKeyId ?? '').trim(),
+  awsSecretAccessKey: String(form.awsSecretAccessKey ?? '').trim(),
+  awsRegion: String(form.awsRegion ?? '').trim(),
 });
 
 const areCloakConfigsEqual = (left: ClaudeEditBaseline['cloak'], right: ClaudeEditBaseline['cloak']) => {

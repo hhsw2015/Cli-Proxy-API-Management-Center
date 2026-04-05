@@ -30,6 +30,9 @@ export type ClaudeEditBaseline = {
   models: Array<{ name: string; alias: string }>;
   excludedModels: string[];
   cloak: ClaudeCloakBaseline;
+  awsAccessKeyId: string;
+  awsSecretAccessKey: string;
+  awsRegion: string;
 };
 
 type ClaudeEditDraft = {
