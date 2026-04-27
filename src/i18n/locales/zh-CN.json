@@ -120,7 +120,8 @@
     "logs": "日志查看",
     "system_info": "中心信息",
     "monitor": "监控中心",
-    "backup": "数据备份"
+    "backup": "数据备份",
+    "integrations": "CLI 接管"
   },
   "dashboard": {
     "title": "仪表盘",
@@ -1756,5 +1757,21 @@
     "scope_preferences_hint": "主题、语言、侧边栏状态等",
     "scope_config_restore_hint": "仅查看，不会自动写入后端",
     "scope_usage_hint": "导入使用统计到后端"
+  },
+  "integrations": {
+    "title": "CLI 接管",
+    "subtitle": "自动配置 CLI 工具使用 CPA 作为 API 代理",
+    "refresh": "刷新",
+    "apply": "接管",
+    "rollback": "回滚",
+    "stateConfigured": "已接管",
+    "stateNotConfigured": "未接管",
+    "stateError": "错误",
+    "applySuccess": "{{name}} 配置成功",
+    "rollbackSuccess": "{{name}} 已回滚",
+    "actionFailed": "操作失败: {{error}}",
+    "noBackup": "无可用备份",
+    "targetPath": "配置文件",
+    "empty": "未检测到支持的集成工具"
   }
 }

@@ -120,7 +120,8 @@
     "logs": "Logs Viewer",
     "system_info": "Management Center Info",
     "monitor": "Monitor Center",
-    "backup": "Data Backup"
+    "backup": "Data Backup",
+    "integrations": "CLI Takeover"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -1756,5 +1757,21 @@
     "scope_preferences_hint": "Theme, language, sidebar state, etc.",
     "scope_config_restore_hint": "View only, will not write to backend automatically",
     "scope_usage_hint": "Import usage statistics to backend"
+  },
+  "integrations": {
+    "title": "CLI Takeover",
+    "subtitle": "Auto-configure CLI tools to use CPA as their API proxy",
+    "refresh": "Refresh",
+    "apply": "Apply",
+    "rollback": "Rollback",
+    "stateConfigured": "Configured",
+    "stateNotConfigured": "Not Configured",
+    "stateError": "Error",
+    "applySuccess": "{{name}} configured successfully",
+    "rollbackSuccess": "{{name}} rolled back successfully",
+    "actionFailed": "Action failed: {{error}}",
+    "noBackup": "No backup available",
+    "targetPath": "Config file",
+    "empty": "No supported integrations detected"
   }
 }

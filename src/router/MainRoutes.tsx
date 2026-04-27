@@ -21,6 +21,7 @@ import { ConfigPage } from '@/pages/ConfigPage';
 import { LogsPage } from '@/pages/LogsPage';
 import { SystemPage } from '@/pages/SystemPage';
 import { MonitorPage } from '@/pages/MonitorPage';
+import { IntegrationsPage } from '@/pages/IntegrationsPage';
 import { BackupPage } from '@/features/webdavBackup/BackupPage';
 
 const mainRoutes = [
@@ -80,6 +81,7 @@ const mainRoutes = [
   { path: '/system', element: <SystemPage /> },
   { path: '/monitor', element: <MonitorPage /> },
   { path: '/backup', element: <BackupPage /> },
+  { path: '/integrations', element: <IntegrationsPage /> },
   { path: '*', element: <Navigate to="/" replace /> },
 ];
 
