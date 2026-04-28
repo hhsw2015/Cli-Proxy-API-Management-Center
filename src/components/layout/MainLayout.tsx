@@ -32,6 +32,7 @@ import {
   useNotificationStore,
   useThemeStore,
 } from '@/stores';
+import { commercialApi } from '@/services/api/commercial';
 import { triggerHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { LANGUAGE_LABEL_KEYS, LANGUAGE_ORDER } from '@/utils/constants';
 import { isSupportedLanguage } from '@/utils/language';
@@ -243,6 +244,7 @@ export function MainLayout() {
   const language = useLanguageStore((state) => state.language);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
 
+  const [commercialEnabled, setCommercialEnabled] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
@@ -405,6 +407,10 @@ export function MainLayout() {
     });
   }, [fetchConfig]);
 
+  useEffect(() => {
+    commercialApi.getStatus().then((s) => setCommercialEnabled(s.enabled)).catch(() => {});
+  }, []);
+
   const navItems = [
     { path: '/', label: t('nav.dashboard'), icon: sidebarIcons.dashboard },
     { path: '/config', label: t('nav.config_management'), icon: sidebarIcons.config },
@@ -417,6 +423,9 @@ export function MainLayout() {
       ? [{ path: '/logs', label: t('nav.logs'), icon: sidebarIcons.logs }]
       : []),
     { path: '/integrations', label: t('nav.integrations'), icon: sidebarIcons.config },
+    ...(commercialEnabled
+      ? [{ path: '/commercial', label: t('nav.commercial'), icon: sidebarIcons.config }]
+      : []),
     { path: '/system', label: t('nav.system_info'), icon: sidebarIcons.system },
     { path: '/monitor', label: t('nav.monitor'), icon: sidebarIcons.monitor },
     { path: '/backup', label: t('nav.backup'), icon: sidebarIcons.backup },

@@ -121,7 +121,8 @@
     "system_info": "Management Center Info",
     "monitor": "Monitor Center",
     "backup": "Data Backup",
-    "integrations": "CLI Takeover"
+    "integrations": "CLI Takeover",
+    "commercial": "Commercial"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -1757,6 +1758,9 @@
     "scope_preferences_hint": "Theme, language, sidebar state, etc.",
     "scope_config_restore_hint": "View only, will not write to backend automatically",
     "scope_usage_hint": "Import usage statistics to backend"
+  },
+  "commercial": {
+    "notEnabled": "Commercial layer is not enabled. Enable it in config.yaml under 'commercial.enabled: true'."
   },
   "integrations": {
     "title": "CLI Takeover",
