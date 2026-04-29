@@ -21,11 +21,6 @@ const SUB2API_TOKEN_KEY = 'auth_token';
  * Check if the current page is served under a commercial (Sub2API) deployment.
  * Heuristic: the management panel is loaded at /management.html (not standalone).
  */
-function isCommercialMode(): boolean {
-  return window.location.pathname.includes('/management.html') &&
-    localStorage.getItem(SUB2API_TOKEN_KEY) !== null;
-}
-
 /**
  * Read the Sub2API JWT from localStorage (if any).
  */
@@ -35,14 +30,6 @@ function getSub2ApiToken(): string | null {
   } catch {
     return null;
   }
-}
-
-/**
- * Redirect to Sub2API login page with a redirect back to the management panel.
- */
-function redirectToSub2ApiLogin(): void {
-  const currentPath = window.location.pathname + window.location.search + window.location.hash;
-  window.location.href = '/login?redirect=' + encodeURIComponent(currentPath);
 }
 
 interface AuthStoreState extends AuthState {
@@ -111,12 +98,7 @@ export const useAuthStore = create<AuthStoreState>()(
               return true;
             } catch (error) {
               console.warn('SSO auto-login with Sub2API JWT failed:', error);
-              // JWT invalid or expired - in commercial mode, redirect to Sub2API login
-              if (isCommercialMode()) {
-                redirectToSub2ApiLogin();
-                return false;
-              }
-              // Fall through to legacy login
+              // Fall through to legacy password login (avoid redirect loop)
             }
           }
 
@@ -134,11 +116,7 @@ export const useAuthStore = create<AuthStoreState>()(
             }
           }
 
-          // No stored credentials and in commercial mode - redirect to Sub2API login
-          if (!resolvedKey && isCommercialMode()) {
-            redirectToSub2ApiLogin();
-            return false;
-          }
+          // No stored credentials - show normal password prompt (avoid redirect loop)
 
           return false;
         })();
@@ -284,10 +262,6 @@ export const useAuthStore = create<AuthStoreState>()(
 if (typeof window !== 'undefined') {
   window.addEventListener('unauthorized', () => {
     useAuthStore.getState().logout();
-    // In commercial mode, redirect to Sub2API login instead of showing password prompt
-    if (isCommercialMode()) {
-      redirectToSub2ApiLogin();
-    }
   });
 
   window.addEventListener(

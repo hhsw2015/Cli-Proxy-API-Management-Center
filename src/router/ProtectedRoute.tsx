@@ -6,13 +6,6 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 /**
  * Check if we are running in commercial (Sub2API) mode.
  */
-const SUB2API_TOKEN_KEY = 'auth_token';
-
-function isCommercialMode(): boolean {
-  return window.location.pathname.includes('/management.html') &&
-    localStorage.getItem(SUB2API_TOKEN_KEY) !== null;
-}
-
 export function ProtectedRoute({ children }: { children: ReactElement }) {
   const location = useLocation();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -44,17 +37,6 @@ export function ProtectedRoute({ children }: { children: ReactElement }) {
   }
 
   if (!isAuthenticated) {
-    // In commercial mode, redirect to Sub2API login instead of the built-in login page
-    if (isCommercialMode()) {
-      const currentPath = window.location.pathname + window.location.search + window.location.hash;
-      window.location.href = '/login?redirect=' + encodeURIComponent(currentPath);
-      // Return spinner while redirecting to avoid flash of login page
-      return (
-        <div className="main-content">
-          <LoadingSpinner />
-        </div>
-      );
-    }
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
