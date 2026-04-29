@@ -1243,6 +1243,8 @@
           "debug_desc": "Enable verbose debug logging",
           "commercial_mode": "Commercial Mode",
           "commercial_mode_desc": "Disable high-overhead middleware to support high concurrency",
+          "sub2api_enabled": "Sub2API Commercial Layer",
+          "sub2api_enabled_desc": "Enable user billing, payments, and subscriptions (requires restart, PostgreSQL + Redis)",
           "logging_to_file": "Log to File",
           "logging_to_file_desc": "Save logs to files",
           "usage_statistics": "Usage Statistics",

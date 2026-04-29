@@ -783,6 +783,13 @@ export function VisualConfigEditor({
                   onChange={(commercialMode) => onChange({ commercialMode })}
                 />
                 <ToggleRow
+                  title={t('config_management.visual.sections.system.sub2api_enabled')}
+                  description={t('config_management.visual.sections.system.sub2api_enabled_desc')}
+                  checked={values.sub2apiEnabled}
+                  disabled={disabled}
+                  onChange={(sub2apiEnabled) => onChange({ sub2apiEnabled })}
+                />
+                <ToggleRow
                   title={t('config_management.visual.sections.system.logging_to_file')}
                   description={t('config_management.visual.sections.system.logging_to_file_desc')}
                   checked={values.loggingToFile}

@@ -1243,6 +1243,8 @@
           "debug_desc": "启用详细的调试日志",
           "commercial_mode": "商业模式",
           "commercial_mode_desc": "禁用高开销中间件以支持高并发",
+          "sub2api_enabled": "Sub2API 商业层",
+          "sub2api_enabled_desc": "启用用户计费、支付和订阅功能（修改后需重启，依赖 PostgreSQL + Redis）",
           "logging_to_file": "写入日志文件",
           "logging_to_file_desc": "将日志保存到文件",
           "usage_statistics": "使用统计",

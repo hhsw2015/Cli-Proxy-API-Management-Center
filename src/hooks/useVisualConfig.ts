@@ -593,6 +593,9 @@ function getNextDirtyFields(
   if (Object.prototype.hasOwnProperty.call(patch, 'commercialMode')) {
     updateDirty('commercialMode', nextValues.commercialMode === baselineValues.commercialMode);
   }
+  if (Object.prototype.hasOwnProperty.call(patch, 'sub2apiEnabled')) {
+    updateDirty('sub2apiEnabled', nextValues.sub2apiEnabled === baselineValues.sub2apiEnabled);
+  }
   if (Object.prototype.hasOwnProperty.call(patch, 'loggingToFile')) {
     updateDirty('loggingToFile', nextValues.loggingToFile === baselineValues.loggingToFile);
   }
@@ -832,6 +835,7 @@ export function useVisualConfig() {
 
         debug: Boolean(parsed.debug),
         commercialMode: Boolean(parsed['commercial-mode']),
+        sub2apiEnabled: Boolean((parsed as any).commercial?.enabled),
         loggingToFile: Boolean(parsed['logging-to-file']),
         logsMaxTotalSizeMb: String(parsed['logs-max-total-size-mb'] ?? ''),
         usageStatisticsEnabled: Boolean(parsed['usage-statistics-enabled']),
@@ -947,6 +951,7 @@ export function useVisualConfig() {
         setBooleanInDoc(doc, ['debug'], values.debug);
 
         setBooleanInDoc(doc, ['commercial-mode'], values.commercialMode);
+        setBooleanInDoc(doc, ['commercial', 'enabled'], values.sub2apiEnabled);
         setBooleanInDoc(doc, ['logging-to-file'], values.loggingToFile);
         setIntFromStringInDoc(doc, ['logs-max-total-size-mb'], values.logsMaxTotalSizeMb);
         setBooleanInDoc(doc, ['usage-statistics-enabled'], values.usageStatisticsEnabled);

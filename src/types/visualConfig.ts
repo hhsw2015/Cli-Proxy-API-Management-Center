@@ -65,6 +65,7 @@ export type VisualConfigValues = {
   apiKeysText: string;
   debug: boolean;
   commercialMode: boolean;
+  sub2apiEnabled: boolean;
   loggingToFile: boolean;
   logsMaxTotalSizeMb: string;
   usageStatisticsEnabled: boolean;
@@ -107,6 +108,7 @@ export const DEFAULT_VISUAL_VALUES: VisualConfigValues = {
   apiKeysText: '',
   debug: false,
   commercialMode: false,
+  sub2apiEnabled: false,
   loggingToFile: false,
   logsMaxTotalSizeMb: '',
   usageStatisticsEnabled: false,
