@@ -121,6 +121,16 @@ export function LoginPage() {
             navigate(redirect, { replace: true });
           }, 1500);
         } else {
+          // In commercial mode, if restoreSession did not redirect already,
+          // redirect to Sub2API login (this handles the case where restoreSession
+          // returned false without redirecting, e.g. no token and no stored key)
+          const isCommercial = window.location.pathname.includes('/management.html') &&
+            localStorage.getItem('auth_token') !== null;
+          if (isCommercial) {
+            const currentPath = window.location.pathname + window.location.search + window.location.hash;
+            window.location.href = '/login?redirect=' + encodeURIComponent(currentPath);
+            return;
+          }
           setApiBase(storedBase || detectedBase);
           setManagementKey(storedKey || '');
           setRememberPassword(storedRememberPassword || Boolean(storedKey));

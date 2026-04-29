@@ -14,6 +14,37 @@ import { useUsageStatsStore } from './useUsageStatsStore';
 import { useModelsStore } from './useModelsStore';
 import { detectApiBaseFromLocation, normalizeApiBase } from '@/utils/connection';
 
+// Sub2API SSO: localStorage key used by Sub2API frontend for JWT
+const SUB2API_TOKEN_KEY = 'auth_token';
+
+/**
+ * Check if the current page is served under a commercial (Sub2API) deployment.
+ * Heuristic: the management panel is loaded at /management.html (not standalone).
+ */
+function isCommercialMode(): boolean {
+  return window.location.pathname.includes('/management.html') &&
+    localStorage.getItem(SUB2API_TOKEN_KEY) !== null;
+}
+
+/**
+ * Read the Sub2API JWT from localStorage (if any).
+ */
+function getSub2ApiToken(): string | null {
+  try {
+    return localStorage.getItem(SUB2API_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Redirect to Sub2API login page with a redirect back to the management panel.
+ */
+function redirectToSub2ApiLogin(): void {
+  const currentPath = window.location.pathname + window.location.search + window.location.hash;
+  window.location.href = '/login?redirect=' + encodeURIComponent(currentPath);
+}
+
 interface AuthStoreState extends AuthState {
   connectionStatus: ConnectionStatus;
   connectionError: string | null;
@@ -67,6 +98,28 @@ export const useAuthStore = create<AuthStoreState>()(
           });
           apiClient.setConfig({ apiBase: resolvedBase, managementKey: resolvedKey });
 
+          // SSO: try Sub2API JWT before legacy credential restore
+          const ssoToken = getSub2ApiToken();
+          if (ssoToken) {
+            const ssoBase = normalizeApiBase(resolvedBase || detectApiBaseFromLocation());
+            try {
+              await get().login({
+                apiBase: ssoBase,
+                managementKey: ssoToken,
+                rememberPassword: false
+              });
+              return true;
+            } catch (error) {
+              console.warn('SSO auto-login with Sub2API JWT failed:', error);
+              // JWT invalid or expired - in commercial mode, redirect to Sub2API login
+              if (isCommercialMode()) {
+                redirectToSub2ApiLogin();
+                return false;
+              }
+              // Fall through to legacy login
+            }
+          }
+
           if (wasLoggedIn && resolvedBase && resolvedKey) {
             try {
               await get().login({
@@ -79,6 +132,12 @@ export const useAuthStore = create<AuthStoreState>()(
               console.warn('Auto login failed:', error);
               return false;
             }
+          }
+
+          // No stored credentials and in commercial mode - redirect to Sub2API login
+          if (!resolvedKey && isCommercialMode()) {
+            redirectToSub2ApiLogin();
+            return false;
           }
 
           return false;
@@ -225,6 +284,10 @@ export const useAuthStore = create<AuthStoreState>()(
 if (typeof window !== 'undefined') {
   window.addEventListener('unauthorized', () => {
     useAuthStore.getState().logout();
+    // In commercial mode, redirect to Sub2API login instead of showing password prompt
+    if (isCommercialMode()) {
+      redirectToSub2ApiLogin();
+    }
   });
 
   window.addEventListener(
