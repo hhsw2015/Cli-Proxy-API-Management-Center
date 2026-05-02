@@ -98,7 +98,8 @@ export const useAuthStore = create<AuthStoreState>()(
               return true;
             } catch (error) {
               console.warn('SSO auto-login with Sub2API JWT failed:', error);
-              // Fall through to legacy password login (avoid redirect loop)
+              // Clear error state so login page shows clean prompt
+              set({ connectionStatus: 'disconnected', connectionError: null });
             }
           }
 
