@@ -86,25 +86,26 @@ export const useAuthStore = create<AuthStoreState>()(
           });
           apiClient.setConfig({ apiBase: resolvedBase, managementKey: resolvedKey });
 
-          // SSO: try Sub2API JWT before legacy credential restore
-          const ssoToken = getSub2ApiToken();
-          if (ssoToken) {
-            const ssoBase = normalizeApiBase(resolvedBase || detectApiBaseFromLocation());
-            suppressUnauthorized = true;
-            try {
-              await get().login({
-                apiBase: ssoBase,
-                managementKey: ssoToken,
-                rememberPassword: false
-              });
-              suppressUnauthorized = false;
-              return true;
-            } catch (error) {
-              suppressUnauthorized = false;
-              console.warn('SSO auto-login with Sub2API JWT failed:', error);
-              // Clear error state and restore correct apiClient config
-              set({ connectionStatus: 'disconnected', connectionError: null });
-              apiClient.setConfig({ apiBase: resolvedBase, managementKey: resolvedKey });
+          // SSO: try Sub2API JWT ONLY if no saved credentials exist
+          // (avoid interfering with "remember password" flow)
+          if (!resolvedKey) {
+            const ssoToken = getSub2ApiToken();
+            if (ssoToken) {
+              const ssoBase = normalizeApiBase(resolvedBase || detectApiBaseFromLocation());
+              suppressUnauthorized = true;
+              try {
+                await get().login({
+                  apiBase: ssoBase,
+                  managementKey: ssoToken,
+                  rememberPassword: false
+                });
+                suppressUnauthorized = false;
+                return true;
+              } catch (error) {
+                suppressUnauthorized = false;
+                console.warn('SSO auto-login with Sub2API JWT failed:', error);
+                set({ connectionStatus: 'disconnected', connectionError: null });
+              }
             }
           }
 
