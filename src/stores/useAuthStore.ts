@@ -46,6 +46,7 @@ interface AuthStoreState extends AuthState {
 }
 
 let restoreSessionPromise: Promise<boolean> | null = null;
+let suppressUnauthorized = false;
 
 export const useAuthStore = create<AuthStoreState>()(
   persist(
@@ -89,17 +90,21 @@ export const useAuthStore = create<AuthStoreState>()(
           const ssoToken = getSub2ApiToken();
           if (ssoToken) {
             const ssoBase = normalizeApiBase(resolvedBase || detectApiBaseFromLocation());
+            suppressUnauthorized = true;
             try {
               await get().login({
                 apiBase: ssoBase,
                 managementKey: ssoToken,
                 rememberPassword: false
               });
+              suppressUnauthorized = false;
               return true;
             } catch (error) {
+              suppressUnauthorized = false;
               console.warn('SSO auto-login with Sub2API JWT failed:', error);
-              // Clear error state so login page shows clean prompt
+              // Clear error state and restore correct apiClient config
               set({ connectionStatus: 'disconnected', connectionError: null });
+              apiClient.setConfig({ apiBase: resolvedBase, managementKey: resolvedKey });
             }
           }
 
@@ -262,6 +267,7 @@ export const useAuthStore = create<AuthStoreState>()(
 // 监听全局未授权事件
 if (typeof window !== 'undefined') {
   window.addEventListener('unauthorized', () => {
+    if (suppressUnauthorized) return;
     useAuthStore.getState().logout();
   });
 
