@@ -34,6 +34,7 @@ export interface UsageHistoryResponse {
     total_reasoning: number;
     total_cached: number;
     total_tokens: number;
+    total_cost_usd: number;
     avg_latency_ms: number;
   };
   by_model?: Array<{

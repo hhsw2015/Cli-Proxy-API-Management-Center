@@ -68,6 +68,10 @@ export function UsageHistoryCard() {
               <div className={styles.statLabel}>Latency</div>
             </div>
             <div>
+              <div className={styles.statValue}>${summary!.total_cost_usd.toFixed(2)}</div>
+              <div className={styles.statLabel}>Cost</div>
+            </div>
+            <div>
               <div className={styles.statValue} style={summary!.failed_requests > 0 ? { color: '#ef4444' } : undefined}>
                 {summary!.failed_requests}
               </div>
