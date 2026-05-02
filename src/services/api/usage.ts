@@ -22,11 +22,49 @@ export interface UsageImportResponse {
   [key: string]: unknown;
 }
 
+export interface UsageHistoryResponse {
+  enabled: boolean;
+  record_count?: number;
+  period_days?: number;
+  summary?: {
+    total_requests: number;
+    failed_requests: number;
+    total_input: number;
+    total_output: number;
+    total_reasoning: number;
+    total_cached: number;
+    total_tokens: number;
+    avg_latency_ms: number;
+  };
+  by_model?: Array<{
+    model: string;
+    requests: number;
+    failed: number;
+    input_tokens: number;
+    output_tokens: number;
+    total_tokens: number;
+    avg_latency_ms: number;
+  }>;
+  daily?: Array<{
+    day: string;
+    requests: number;
+    failed: number;
+    total_tokens: number;
+  }>;
+  message?: string;
+}
+
 export const usageApi = {
   /**
    * 获取使用统计原始数据
    */
   getUsage: () => apiClient.get<Record<string, unknown>>('/usage', { timeout: USAGE_TIMEOUT_MS }),
+
+  /**
+   * 获取 SQLite 持久化历史数据
+   */
+  getHistory: (days = 30) =>
+    apiClient.get<UsageHistoryResponse>(`/usage/history?days=${days}`, { timeout: USAGE_TIMEOUT_MS }),
 
   /**
    * 导出使用统计快照

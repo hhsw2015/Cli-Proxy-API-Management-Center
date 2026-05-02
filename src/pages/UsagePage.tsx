@@ -36,6 +36,7 @@ import {
   useSparklines,
   useChartData,
 } from '@/components/usage';
+import { UsageHistoryCard } from '@/components/usage/UsageHistoryCard';
 import {
   getModelNamesFromUsage,
   getApiStats,
@@ -318,6 +319,9 @@ export function UsagePage() {
       </div>
 
       {error && <div className={styles.errorBox}>{error}</div>}
+
+      {/* Persistent History from SQLite */}
+      <UsageHistoryCard />
 
       {/* Stats Overview Cards */}
       <StatCards
