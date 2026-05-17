@@ -68,7 +68,6 @@ export type VisualConfigValues = {
   sub2apiEnabled: boolean;
   loggingToFile: boolean;
   logsMaxTotalSizeMb: string;
-  usageStatisticsEnabled: boolean;
   proxyUrl: string;
   forceModelPrefix: boolean;
   requestRetry: string;
@@ -111,7 +110,6 @@ export const DEFAULT_VISUAL_VALUES: VisualConfigValues = {
   sub2apiEnabled: false,
   loggingToFile: false,
   logsMaxTotalSizeMb: '',
-  usageStatisticsEnabled: false,
   proxyUrl: '',
   forceModelPrefix: false,
   requestRetry: '',

@@ -3,6 +3,7 @@ import iconAntigravity from '@/assets/icons/antigravity.svg';
 import iconClaude from '@/assets/icons/claude.svg';
 import iconCodex from '@/assets/icons/codex.svg';
 import iconGemini from '@/assets/icons/gemini.svg';
+import iconGrok from '@/assets/icons/grok.svg';
 import iconIflow from '@/assets/icons/iflow.svg';
 import iconKimiDark from '@/assets/icons/kimi-dark.svg';
 import iconKimiLight from '@/assets/icons/kimi-light.svg';
@@ -10,12 +11,6 @@ import iconQwen from '@/assets/icons/qwen.svg';
 import iconVertex from '@/assets/icons/vertex.svg';
 import type { AuthFileItem } from '@/types';
 import { parseTimestamp } from '@/utils/timestamp';
-import {
-  normalizeAuthIndex,
-  normalizeUsageSourceId,
-  type KeyStatBucket,
-  type KeyStats,
-} from '@/utils/usage';
 
 export type ThemeColors = { bg: string; text: string; border?: string };
 export type TypeColorSet = { light: ThemeColors; dark?: ThemeColors };
@@ -93,6 +88,11 @@ export const TYPE_COLORS: Record<string, TypeColorSet> = {
     light: { bg: '#e0f7fa', text: '#006064' },
     dark: { bg: '#004d40', text: '#80deea' },
   },
+  // xAI / Grok: neutral graphite, kept distinct from the blue and purple providers
+  xai: {
+    light: { bg: '#eceff3', text: '#15181d' },
+    dark: { bg: '#e5e7eb', text: '#111827' },
+  },
   // iFlow logo: 品红紫渐变 #5C5CFF → #AE5CFF，偏品红以区别于 Qwen 的紫罗兰
   iflow: {
     light: { bg: '#f5e3fc', text: '#9025c8' },
@@ -120,6 +120,7 @@ export const AUTH_FILE_ICONS: Record<string, AuthFileIconAsset> = {
   codex: iconCodex,
   gemini: iconGemini,
   'gemini-cli': iconGemini,
+  xai: iconGrok,
   iflow: iconIflow,
   kimi: { light: iconKimiLight, dark: iconKimiDark },
   qwen: iconQwen,
@@ -236,46 +237,6 @@ export function isRuntimeOnlyAuthFile(file: AuthFileItem): boolean {
   if (typeof raw === 'boolean') return raw;
   if (typeof raw === 'string') return raw.trim().toLowerCase() === 'true';
   return false;
-}
-
-export function resolveAuthFileStats(file: AuthFileItem, stats: KeyStats): KeyStatBucket {
-  const defaultStats: KeyStatBucket = { success: 0, failure: 0 };
-  const rawFileName = file?.name || '';
-
-  // 兼容 auth_index 和 authIndex 两种字段名（API 返回的是 auth_index）
-  const rawAuthIndex = file['auth_index'] ?? file.authIndex;
-  const authIndexKey = normalizeAuthIndex(rawAuthIndex);
-
-  // 尝试根据 authIndex 匹配
-  if (authIndexKey && stats.byAuthIndex?.[authIndexKey]) {
-    return stats.byAuthIndex[authIndexKey];
-  }
-
-  // 尝试根据 source (文件名) 匹配
-  const fileNameId = rawFileName ? normalizeUsageSourceId(rawFileName) : '';
-  if (fileNameId && stats.bySource?.[fileNameId]) {
-    const fromName = stats.bySource[fileNameId];
-    if (fromName.success > 0 || fromName.failure > 0) {
-      return fromName;
-    }
-  }
-
-  // 尝试去掉扩展名后匹配
-  if (rawFileName) {
-    const nameWithoutExt = rawFileName.replace(/\.[^/.]+$/, '');
-    if (nameWithoutExt && nameWithoutExt !== rawFileName) {
-      const nameWithoutExtId = normalizeUsageSourceId(nameWithoutExt);
-      const fromNameWithoutExt = nameWithoutExtId ? stats.bySource?.[nameWithoutExtId] : undefined;
-      if (
-        fromNameWithoutExt &&
-        (fromNameWithoutExt.success > 0 || fromNameWithoutExt.failure > 0)
-      ) {
-        return fromNameWithoutExt;
-      }
-    }
-  }
-
-  return defaultStats;
 }
 
 export const formatModified = (item: AuthFileItem): string => {
