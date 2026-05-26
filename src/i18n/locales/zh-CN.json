@@ -118,7 +118,16 @@
     "quota_management": "配额管理",
     "config_management": "配置面板",
     "logs": "日志查看",
-    "system_info": "中心信息"
+    "system_info": "中心信息",
+    "integrations": "集成",
+    "commercial": "商业功能",
+    "monitor": "监控",
+    "backup": "备份",
+    "ai": "AI 提供商",
+    "auth": "认证文件",
+    "config": "配置",
+    "quota": "配额",
+    "system": "系统"
   },
   "nav_groups": {
     "operate": "运行",
