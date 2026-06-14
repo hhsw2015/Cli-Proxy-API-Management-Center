@@ -14,3 +14,4 @@ export * from './log';
 export * from './quota';
 export * from './sourceInfo';
 export * from './integration';
+export * from './plugin';
