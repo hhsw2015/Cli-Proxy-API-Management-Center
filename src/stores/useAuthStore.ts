@@ -92,14 +92,17 @@ export const useAuthStore = create<AuthStoreState>()(
           const legacyKey = obfuscatedStorage.getItem<string>('managementKey');
 
           const { apiBase, managementKey, rememberPassword } = get();
-          const resolvedBase = normalizeApiBase(apiBase || legacyBase || detectApiBaseFromLocation());
+          const resolvedBase = normalizeApiBase(
+            apiBase || legacyBase || detectApiBaseFromLocation()
+          );
           const resolvedKey = managementKey || legacyKey || '';
-          const resolvedRememberPassword = rememberPassword || Boolean(managementKey) || Boolean(legacyKey);
+          const resolvedRememberPassword =
+            rememberPassword || Boolean(managementKey) || Boolean(legacyKey);
 
           set({
             apiBase: resolvedBase,
             managementKey: resolvedKey,
-            rememberPassword: resolvedRememberPassword
+            rememberPassword: resolvedRememberPassword,
           });
           apiClient.setConfig({ apiBase: resolvedBase, managementKey: resolvedKey });
 
@@ -131,7 +134,7 @@ export const useAuthStore = create<AuthStoreState>()(
               await get().login({
                 apiBase: resolvedBase,
                 managementKey: resolvedKey,
-                rememberPassword: resolvedRememberPassword
+                rememberPassword: resolvedRememberPassword,
               });
               return true;
             } catch (error) {
@@ -160,14 +163,14 @@ export const useAuthStore = create<AuthStoreState>()(
             serverVersion: null,
             serverBuildDate: null,
             serverRuntimeKind: 'unknown',
-            supportsPlugin: false
+            supportsPlugin: false,
           });
           useModelsStore.getState().clearCache();
 
           // 配置 API 客户端
           apiClient.setConfig({
             apiBase,
-            managementKey
+            managementKey,
           });
 
           // 测试连接 - 获取配置
@@ -182,7 +185,7 @@ export const useAuthStore = create<AuthStoreState>()(
             rememberPassword,
             connectionStatus: 'connected',
             connectionError: null,
-            ...(runtimeKind !== 'unknown' ? { serverRuntimeKind: runtimeKind } : {})
+            ...(runtimeKind !== 'unknown' ? { serverRuntimeKind: runtimeKind } : {}),
           });
           if (rememberPassword) {
             localStorage.setItem('isLoggedIn', 'true');
@@ -198,7 +201,7 @@ export const useAuthStore = create<AuthStoreState>()(
                 : 'Connection failed';
           set({
             connectionStatus: 'error',
-            connectionError: message || 'Connection failed'
+            connectionError: message || 'Connection failed',
           });
           throw error;
         }
@@ -218,7 +221,7 @@ export const useAuthStore = create<AuthStoreState>()(
           serverRuntimeKind: 'unknown',
           supportsPlugin: false,
           connectionStatus: 'disconnected',
-          connectionError: null
+          connectionError: null,
         });
         localStorage.removeItem('isLoggedIn');
       },
@@ -243,7 +246,7 @@ export const useAuthStore = create<AuthStoreState>()(
           set({
             isAuthenticated: true,
             connectionStatus: 'connected',
-            ...(runtimeKind !== 'unknown' ? { serverRuntimeKind: runtimeKind } : {})
+            ...(runtimeKind !== 'unknown' ? { serverRuntimeKind: runtimeKind } : {}),
           });
 
           return true;
@@ -251,7 +254,7 @@ export const useAuthStore = create<AuthStoreState>()(
           set({
             isAuthenticated: false,
             connectionStatus: 'error',
-            supportsPlugin: false
+            supportsPlugin: false,
           });
           return false;
         }
@@ -262,7 +265,7 @@ export const useAuthStore = create<AuthStoreState>()(
         set((state) => ({
           serverVersion: version || null,
           serverBuildDate: buildDate || null,
-          serverRuntimeKind: runtimeKind || state.serverRuntimeKind
+          serverRuntimeKind: runtimeKind || state.serverRuntimeKind,
         }));
       },
 
@@ -278,9 +281,9 @@ export const useAuthStore = create<AuthStoreState>()(
       updateConnectionStatus: (status, error = null) => {
         set({
           connectionStatus: status,
-          connectionError: error
+          connectionError: error,
         });
-      }
+      },
     }),
     {
       name: STORAGE_KEY_AUTH,
@@ -294,7 +297,7 @@ export const useAuthStore = create<AuthStoreState>()(
         },
         removeItem: (name) => {
           obfuscatedStorage.removeItem(name);
-        }
+        },
       })),
       partialize: (state) => ({
         apiBase: state.apiBase,
@@ -302,8 +305,8 @@ export const useAuthStore = create<AuthStoreState>()(
         rememberPassword: state.rememberPassword,
         serverVersion: state.serverVersion,
         serverBuildDate: state.serverBuildDate,
-        serverRuntimeKind: state.serverRuntimeKind
-      })
+        serverRuntimeKind: state.serverRuntimeKind,
+      }),
     }
   )
 );
@@ -315,24 +318,16 @@ if (typeof window !== 'undefined') {
     useAuthStore.getState().logout();
   });
 
-  window.addEventListener(
-    'server-version-update',
-    ((e: CustomEvent) => {
-      const detail = e.detail || {};
-      const runtimeKind =
-        detail.runtimeKind === 'cpa' || detail.runtimeKind === 'home'
-          ? detail.runtimeKind
-          : null;
-      useAuthStore
-        .getState()
-        .updateServerVersion(detail.version || null, detail.buildDate || null, runtimeKind);
-    }) as EventListener
-  );
+  window.addEventListener('server-version-update', ((e: CustomEvent) => {
+    const detail = e.detail || {};
+    const runtimeKind =
+      detail.runtimeKind === 'cpa' || detail.runtimeKind === 'home' ? detail.runtimeKind : null;
+    useAuthStore
+      .getState()
+      .updateServerVersion(detail.version || null, detail.buildDate || null, runtimeKind);
+  }) as EventListener);
 
-  window.addEventListener(
-    'server-plugin-support-update',
-    ((e: CustomEvent) => {
-      useAuthStore.getState().updateServerPluginSupport(e.detail?.supportsPlugin === true);
-    }) as EventListener
-  );
+  window.addEventListener('server-plugin-support-update', ((e: CustomEvent) => {
+    useAuthStore.getState().updateServerPluginSupport(e.detail?.supportsPlugin === true);
+  }) as EventListener);
 }
