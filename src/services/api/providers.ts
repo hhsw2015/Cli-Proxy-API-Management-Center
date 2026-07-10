@@ -4,11 +4,7 @@
 
 import { apiClient } from './client';
 import { isRecord } from '@/utils/helpers';
-import {
-  normalizeGeminiKeyConfig,
-  normalizeOpenAIProvider,
-  normalizeProviderKeyConfig,
-} from './transformers';
+import { normalizeGeminiKeyConfig, normalizeOpenAIProvider, normalizeProviderKeyConfig } from './transformers';
 import type {
   GeminiKeyConfig,
   OpenAIProviderConfig,

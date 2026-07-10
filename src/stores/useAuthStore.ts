@@ -34,7 +34,6 @@ function getSub2ApiToken(): string | null {
 
 interface AuthStoreState extends AuthState {
   connectionStatus: ConnectionStatus;
-  connectionError: string | null;
 
   // 操作
   login: (credentials: LoginCredentials) => Promise<void>;
@@ -48,7 +47,6 @@ interface AuthStoreState extends AuthState {
   ) => void;
   updateServerRuntimeKind: (runtimeKind: ServerRuntimeKind) => void;
   updateServerPluginSupport: (supportsPlugin: boolean) => void;
-  updateConnectionStatus: (status: ConnectionStatus, error?: string | null) => void;
 }
 
 let restoreSessionPromise: Promise<boolean> | null = null;
@@ -76,7 +74,6 @@ export const useAuthStore = create<AuthStoreState>()(
       serverRuntimeKind: 'unknown',
       supportsPlugin: false,
       connectionStatus: 'disconnected',
-      connectionError: null,
 
       // 恢复会话并自动登录
       restoreSession: () => {
@@ -124,7 +121,7 @@ export const useAuthStore = create<AuthStoreState>()(
               } catch (error) {
                 suppressUnauthorized = false;
                 console.warn('SSO auto-login with Sub2API JWT failed:', error);
-                set({ connectionStatus: 'disconnected', connectionError: null });
+                set({ connectionStatus: 'disconnected' });
               }
             }
           }
@@ -174,7 +171,7 @@ export const useAuthStore = create<AuthStoreState>()(
           });
 
           // 测试连接 - 获取配置
-          await useConfigStore.getState().fetchConfig(undefined, true);
+          await useConfigStore.getState().fetchConfig(true);
           const runtimeKind = await detectRuntimeKind();
 
           // 登录成功
@@ -184,7 +181,6 @@ export const useAuthStore = create<AuthStoreState>()(
             managementKey,
             rememberPassword,
             connectionStatus: 'connected',
-            connectionError: null,
             ...(runtimeKind !== 'unknown' ? { serverRuntimeKind: runtimeKind } : {}),
           });
           if (rememberPassword) {
@@ -193,16 +189,7 @@ export const useAuthStore = create<AuthStoreState>()(
             localStorage.removeItem('isLoggedIn');
           }
         } catch (error: unknown) {
-          const message =
-            error instanceof Error
-              ? error.message
-              : typeof error === 'string'
-                ? error
-                : 'Connection failed';
-          set({
-            connectionStatus: 'error',
-            connectionError: message || 'Connection failed',
-          });
+          set({ connectionStatus: 'error' });
           throw error;
         }
       },
@@ -221,7 +208,6 @@ export const useAuthStore = create<AuthStoreState>()(
           serverRuntimeKind: 'unknown',
           supportsPlugin: false,
           connectionStatus: 'disconnected',
-          connectionError: null,
         });
         localStorage.removeItem('isLoggedIn');
       },
@@ -275,14 +261,6 @@ export const useAuthStore = create<AuthStoreState>()(
 
       updateServerPluginSupport: (supportsPlugin) => {
         set({ supportsPlugin });
-      },
-
-      // 更新连接状态
-      updateConnectionStatus: (status, error = null) => {
-        set({
-          connectionStatus: status,
-          connectionError: error,
-        });
       },
     }),
     {

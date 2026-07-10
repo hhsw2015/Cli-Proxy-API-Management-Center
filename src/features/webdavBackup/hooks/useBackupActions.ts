@@ -37,7 +37,7 @@ async function collectBackupData(scope: BackupScope): Promise<BackupData> {
 
   if (scope.config) {
     try {
-      const cfg = await configApi.getRawConfig();
+      const cfg = await configApi.getConfig();
       data.config = cfg as Record<string, unknown>;
     } catch (err) {
       console.warn('[WebDAV Backup] Failed to fetch config:', err);
