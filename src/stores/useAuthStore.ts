@@ -5,11 +5,10 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { AuthState, LoginCredentials, ConnectionStatus, ServerRuntimeKind } from '@/types';
+import type { AuthState, LoginCredentials, ConnectionStatus } from '@/types';
 import { STORAGE_KEY_AUTH } from '@/utils/constants';
 import { obfuscatedStorage } from '@/services/storage/secureStorage';
 import { apiClient } from '@/services/api/client';
-import { versionApi } from '@/services/api/version';
 import { useConfigStore } from './useConfigStore';
 import { useModelsStore } from './useModelsStore';
 import { useQuotaStore } from './useQuotaStore';
@@ -41,26 +40,12 @@ interface AuthStoreState extends AuthState {
   logout: () => void;
   checkAuth: () => Promise<boolean>;
   restoreSession: () => Promise<boolean>;
-  updateServerVersion: (
-    version: string | null,
-    buildDate?: string | null,
-    runtimeKind?: ServerRuntimeKind | null
-  ) => void;
-  updateServerRuntimeKind: (runtimeKind: ServerRuntimeKind) => void;
+  updateServerVersion: (version: string | null, buildDate?: string | null) => void;
   updateServerPluginSupport: (supportsPlugin: boolean) => void;
 }
 
 let restoreSessionPromise: Promise<boolean> | null = null;
 let suppressUnauthorized = false;
-
-const detectRuntimeKind = async (): Promise<ServerRuntimeKind> => {
-  try {
-    return await versionApi.detectRuntimeKind();
-  } catch (error) {
-    console.warn('Runtime kind detection failed:', error);
-    return 'unknown';
-  }
-};
 
 export const useAuthStore = create<AuthStoreState>()(
   persist(
@@ -72,7 +57,6 @@ export const useAuthStore = create<AuthStoreState>()(
       rememberPassword: false,
       serverVersion: null,
       serverBuildDate: null,
-      serverRuntimeKind: 'unknown',
       supportsPlugin: false,
       connectionStatus: 'disconnected',
 
@@ -160,7 +144,6 @@ export const useAuthStore = create<AuthStoreState>()(
             connectionStatus: 'connecting',
             serverVersion: null,
             serverBuildDate: null,
-            serverRuntimeKind: 'unknown',
             supportsPlugin: false,
           });
           useModelsStore.getState().clearCache();
@@ -174,7 +157,6 @@ export const useAuthStore = create<AuthStoreState>()(
 
           // 测试连接 - 获取配置
           await useConfigStore.getState().fetchConfig(true);
-          const runtimeKind = await detectRuntimeKind();
 
           // 登录成功
           set({
@@ -183,7 +165,6 @@ export const useAuthStore = create<AuthStoreState>()(
             managementKey,
             rememberPassword,
             connectionStatus: 'connected',
-            ...(runtimeKind !== 'unknown' ? { serverRuntimeKind: runtimeKind } : {}),
           });
           if (rememberPassword) {
             localStorage.setItem('isLoggedIn', 'true');
@@ -208,7 +189,6 @@ export const useAuthStore = create<AuthStoreState>()(
           managementKey: '',
           serverVersion: null,
           serverBuildDate: null,
-          serverRuntimeKind: 'unknown',
           supportsPlugin: false,
           connectionStatus: 'disconnected',
         });
@@ -230,12 +210,10 @@ export const useAuthStore = create<AuthStoreState>()(
 
           // 验证连接
           await useConfigStore.getState().fetchConfig();
-          const runtimeKind = await detectRuntimeKind();
 
           set({
             isAuthenticated: true,
             connectionStatus: 'connected',
-            ...(runtimeKind !== 'unknown' ? { serverRuntimeKind: runtimeKind } : {}),
           });
 
           return true;
@@ -250,16 +228,11 @@ export const useAuthStore = create<AuthStoreState>()(
       },
 
       // 更新服务器版本
-      updateServerVersion: (version, buildDate, runtimeKind) => {
-        set((state) => ({
+      updateServerVersion: (version, buildDate) => {
+        set({
           serverVersion: version || null,
           serverBuildDate: buildDate || null,
-          serverRuntimeKind: runtimeKind || state.serverRuntimeKind,
-        }));
-      },
-
-      updateServerRuntimeKind: (runtimeKind) => {
-        set({ serverRuntimeKind: runtimeKind });
+        });
       },
 
       updateServerPluginSupport: (supportsPlugin) => {
@@ -286,7 +259,6 @@ export const useAuthStore = create<AuthStoreState>()(
         rememberPassword: state.rememberPassword,
         serverVersion: state.serverVersion,
         serverBuildDate: state.serverBuildDate,
-        serverRuntimeKind: state.serverRuntimeKind,
       }),
     }
   )
@@ -301,11 +273,7 @@ if (typeof window !== 'undefined') {
 
   window.addEventListener('server-version-update', ((e: CustomEvent) => {
     const detail = e.detail || {};
-    const runtimeKind =
-      detail.runtimeKind === 'cpa' || detail.runtimeKind === 'home' ? detail.runtimeKind : null;
-    useAuthStore
-      .getState()
-      .updateServerVersion(detail.version || null, detail.buildDate || null, runtimeKind);
+    useAuthStore.getState().updateServerVersion(detail.version || null, detail.buildDate || null);
   }) as EventListener);
 
   window.addEventListener('server-plugin-support-update', ((e: CustomEvent) => {
