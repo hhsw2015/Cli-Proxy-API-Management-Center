@@ -1028,6 +1028,7 @@
           "title": "網路設定",
           "description": "代理、重試和路由設定",
           "proxy_url": "代理 URL",
+          "proxy_url_sponsor_hint": "沒有合適的代理？",
           "request_retry": "請求重試次數",
           "max_retry_credentials": "最大重試憑證數",
           "max_retry_credentials_hint": "留空表示不設定；設為 0 表示保留 legacy 行為，並嘗試所有可用憑證。",
@@ -1492,7 +1493,7 @@
       "codex": "Codex",
       "xai": "xAI",
       "claude": "Claude",
-      "claudeApi": "ClaudeAPI",
+      "claudeApi": "Claudeapi.com",
       "vertex": "Vertex",
       "openaiCompatibility": "OpenAI 相容",
       "apikeyFun": "APIKEY.FUN",
@@ -1500,6 +1501,7 @@
       "fennoAI": "FennoAI",
       "qiniuCloud": "七牛雲",
       "lmuAI": "LMU AI（靈眸AI）",
+      "infistar": "無限星河",
       "kimi": "Kimi"
     },
     "table": {
@@ -1552,11 +1554,15 @@
         "standard": "普通 URL",
         "direct": "專線直連 URL",
         "domestic": "中國大陸線路",
-        "overseas": "海外線路"
+        "overseas": "海外線路",
+        "mainlandChina": "中國大陸（推薦）",
+        "global": "全球"
       },
       "urlOptionDescriptions": {
         "domestic": "面向中國大陸使用者和部署在中國大陸網路環境中的業務，通常可獲得更低延遲。",
-        "overseas": "面向海外部署、跨境存取或需要存取境外模型的業務。"
+        "overseas": "面向海外部署、跨境存取或需要存取境外模型的業務。",
+        "mainlandChinaRecommended": "推薦中國大陸使用者和部署在中國大陸網路環境中的業務使用。",
+        "global": "適用於全球其他地區的使用者和部署環境。"
       },
       "modelsTitle": "協議模型設定",
       "modelsHint": "可分別限制或別名映射 Codex API、Anthropic、Gemini 與 OpenAI 相容入口的模型。",
