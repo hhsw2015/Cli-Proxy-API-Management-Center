@@ -1484,7 +1484,7 @@
     },
     "categories": {
       "title": "提供商",
-      "quickFill": "快速填入",
+      "quickFill": "快速接入",
       "activeCount": "{{active}}/{{total}} 活躍"
     },
     "providerNames": {
@@ -1518,6 +1518,7 @@
       },
       "websocketsTag": "WebSockets",
       "cloakTag": "Cloak",
+      "cliProfileTag": "CLI 指紋",
       "empty": "尚未新增設定,點擊右上角新增。",
       "filterPlaceholder": "搜尋金鑰、位址、前綴…",
       "description": "在 {{route}} 下管理資源"
@@ -1527,6 +1528,7 @@
       "detailHint": "{{provider}} 會按協議分別寫入對應的 API Key 設定,此處只做聚合管理。",
       "registerLink": "點此註冊",
       "registerNow": "立即註冊",
+      "kimiPromo": "新用戶首次成功儲值，贈送儲值金額 10% 的 API 額度，最高贈送 ¥1000，優惠截至 9 月 30 日",
       "dashboardLink": "控制面板",
       "emptyRegisterHint": "尚未新增設定",
       "apiKeyHint": "此金鑰只會寫入目前選擇的分組/協議設定。",
@@ -1676,8 +1678,10 @@
       },
       "cloakCacheUserId": "快取 user_id",
       "cloakCacheUserIdHint": "按 API key 複用 Claude cloak 產生的 user_id",
-      "experimentalCchSigning": "實驗性 CCH 簽名",
-      "experimentalCchSigningHint": "對 cloaked Claude /v1/messages 最終請求體啟用 CCH 簽名",
+      "fingerprintProfile": "請求指紋",
+      "fingerprintProfileDefault": "預設（由呼叫端控制）",
+      "fingerprintProfileClaudeCodeCli": "Claude Code CLI",
+      "fingerprintProfileHint": "預設保留呼叫端傳入的提示詞與請求標頭；也可選擇使用 Claude Code CLI 請求指紋。",
       "validation": {
         "nameRequired": "名稱必填",
         "apiKeyRequired": "至少填寫一個 API 金鑰",

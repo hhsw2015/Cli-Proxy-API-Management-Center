@@ -58,6 +58,7 @@ export interface ProviderKeyConfig {
   awsSecretAccessKey?: string;
   awsRegion?: string;
   experimentalCchSigning?: boolean;
+  fingerprintProfile?: string;
   authIndex?: string;
 }
 
